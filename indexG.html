@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+	<!-- Load d3.js -->
+	<script src="https://d3js.org/d3.v4.js"></script>
+</head>
+<body style="background-image: url(mare2.jpg);  background-repeat: no-repeat;
+background-size: cover;" >
+
+
+<div id="whales"></div>
+
+<script>
+
+var larghezzaSchermo = window.innerWidth/1.2;
+var altezzaSchermo = window.innerHeight/1.03;
+var margin = {top: 10, right: 40, bottom: 60, left: 70};
+    width = larghezzaSchermo - margin.left - margin.right;
+    height = altezzaSchermo - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#whales")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+  
+
+// Parse the Data
+d3.json("https://raw.githubusercontent.com/GiacomoScordino/VisInfo/main/Variabili.json", function(data) {
+
+	var minY = d3.min(data, function(d) {
+      return d3.min([d.var1, d.var2, d.var3]);
+    });
+
+    var maxY = d3.max(data, function(d) {
+      return d3.max([d.var1, d.var2, d.var3]);
+    });
+var nBalene=data.length
+var sup = maxY+4;
+// X axis
+var x = d3.scaleLinear()
+  .range([ 0, width ])
+  .domain([0, nBalene+1])
+svg.append("g")
+  .call(d3.axisBottom(x))
+  .style("opacity",0);
+
+// Add Y axis
+var y = d3.scaleLinear()
+  .domain([minY-1, sup])
+  .range([ height, 0]);
+svg.append("g")
+  .call(d3.axisLeft(y))
+  .style("opacity",0);
+
+var clickCount = 0;
+
+var isRKeyPressed = "falso";
+
+d3.select("body")
+  .on("keydown", function() {
+    if (d3.event.key === 'r') { // Codice tasto "r"
+      isRKeyPressed = "vero";
+    }
+  })
+  .on("keyup", function() {
+    if (d3.event.keyCode === 'r') { // Codice tasto "r"
+      isRKeyPressed = "falso";
+    }
+  });
+
+var sup = maxY+4;
+var iter= 0;
+svg.selectAll("image.whale") 
+  .data(data)
+  .enter()
+  .append("image")
+  .attr("class", "whale")
+  .attr("x", function(d) { iter=iter+1 
+	return x(iter); }) 
+  .attr("y", function(d) { return y(d.var1); }) 
+  .attr("xlink:href", "balena.png") 
+  .attr("width", 100) 
+  .attr("height", 100) 
+  .on("click", function(d) {
+  
+	// Define target positions based on click count
+	clickCount = (clickCount + 1) % 3;
+	if (clickCount === 1) {	
+
+			if(isRKeyPressed == "vero"){
+				
+				d3.selectAll("image.whale")
+				.each(function(d) {
+					var whale = d3.select(this);
+					whale.transition()
+					.duration(2000)	
+					.attr("y", sup);
+				});
+				setTimeout(function() {
+					d3.selectAll("image.whale")
+						.attr("xlink:href", "spruzzo.png")
+				}, 2000);
+				setTimeout(function() {
+					isRKeyPressed="falso";
+					d3.selectAll("image.whale")
+						.attr("xlink:href", "balena.png")
+						.each(function(d) {
+							var whale = d3.select(this);
+							whale.transition()
+								.duration(2000)
+								.attr("y", y(d.var2));
+						});				
+				}, 4000);
+			}else{
+				d3.selectAll("image.whale") // Seleziona il cerchio corrente
+							.each(function(d) {
+								var whale = d3.select(this);
+								whale.transition()
+									.duration(2000)
+									.attr("y", y(d.var2));
+				});	
+			
+			}
+		
+	}else if (clickCount === 2) {
+		if(isRKeyPressed == "vero"){
+				d3.selectAll("image.whale") // Seleziona il cerchio corrente
+				.each(function(d) {
+					var whale = d3.select(this);
+					whale.transition()
+					.duration(2000)	
+					.attr("y", sup);
+				});
+				setTimeout(function() {
+					d3.selectAll("image.whale")
+						.attr("xlink:href", "spruzzo.png")
+				}, 2000);
+				setTimeout(function() {
+					isRKeyPressed="falso";
+					d3.selectAll("image.whale")
+						.attr("xlink:href", "balena.png")
+						.each(function(d) {
+							var whale = d3.select(this);
+							whale.transition()
+								.duration(2000)
+								.attr("y", y(d.var3));
+						});				
+				}, 4000);
+			}else{
+				d3.selectAll("image.whale") // Seleziona il cerchio corrente
+							.each(function(d) {
+								var whale = d3.select(this);
+								whale.transition()
+									.duration(2000)
+									.attr("y", y(d.var3));
+				});	
+			
+			}
+			
+	} else {
+		if(isRKeyPressed == "vero"){
+				d3.selectAll("image.whale") // Seleziona il cerchio corrente
+				.each(function(d) {
+					var whale = d3.select(this);
+					whale.transition()
+					.duration(2000)	
+					.attr("y", sup);
+				});
+				setTimeout(function() {
+					d3.selectAll("image.whale")
+						.attr("xlink:href", "spruzzo.png")
+				}, 2000);
+				
+				setTimeout(function() {
+					isRKeyPressed="falso";
+					d3.selectAll("image.whale")
+						.attr("xlink:href", "balena.png")
+						.each(function(d) {
+							var whale = d3.select(this);
+							whale.transition()
+								.duration(2000)
+								.attr("y", y(d.var1));
+						});				
+				}, 4000);
+			}else{
+				d3.selectAll("image.whale") // Seleziona il cerchio corrente
+							.each(function(d) {
+								var whale = d3.select(this);
+								whale.transition()
+									.duration(2000)
+									.attr("y", y(d.var1));
+				});	
+			
+			}
+	} 
+ 
+  });
+
+});	
+
+
+</script>
+
+</body>
+</html>
