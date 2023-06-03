@@ -30,7 +30,7 @@ var svg = d3.select("#whales")
   
 
 // Parse the Data
-d3.json("https://raw.githubusercontent.com/GiacomoScordino/VisInfo/main/Variabili.json", function(data) {
+d3.json("https://raw.githubusercontent.com/GiacomoScordino/VisInfoBalene/main/Variabili.json", function(data) {
 
 	var minY = d3.min(data, function(d) {
       return d3.min([d.var1, d.var2, d.var3]);
